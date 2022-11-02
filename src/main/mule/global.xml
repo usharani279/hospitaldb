@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
+	xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd 
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
+	<http:listener-config name="hospital-database-management-api-httpListenerConfig" doc:name="HTTP Listener config" doc:id="afc9ac0c-f458-42c3-816e-6089d41a696e" >
+		<http:listener-connection host="${http.host}" port="${http.port}" />
+	</http:listener-config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="d9b19efa-e17f-4d6b-b858-e8016f652fea" >
+		<db:my-sql-connection host="${db.host}" port="${db.port}" user="${db.username}" password="${db.password}" database="hospital_management" />
+	</db:config>
+	<configuration-properties doc:name="Configuration properties" doc:id="8b8276a1-9022-4132-a691-8c20edb9d0cf" file="dev.properties" />
+
+<file:config name="File_Config" doc:name="File Config" doc:id="8069a65b-912c-4cb4-8976-2eb475589029" >
+		<file:connection workingDir="D:\hospital-db"/>
+	</file:config>
+	<configuration doc:name="Configuration" doc:id="b773dc2b-88b3-4c1a-a903-fa98bb236585" defaultErrorHandler-ref="exception-handlingError_Handler" />
+
+
+</mule>

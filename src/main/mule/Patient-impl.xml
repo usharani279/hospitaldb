@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
+	
+	
+	<flow name="fetchPatient-implFlow" doc:id="db2d24b0-56f3-4e01-833a-040c4bdf4ff4" >
+		<db:select doc:name="Fetching patient Data" doc:id="99033d29-7f60-4dab-ad99-fca8734e4b6b" config-ref="Database_Config">
+			<db:sql ><![CDATA[select * from  Patient;]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="output payload" doc:id="21273b90-5367-403c-bbc3-55a6141c6441" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="converting payload into csv" doc:id="09d40588-14ae-4d32-8ff9-78a8f0a012c7" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/csv quoteValues = true
+---
+payload ]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<file:write doc:name="csv" doc:id="bd723de7-6767-4eae-938b-73f213aaec1f" config-ref="File_Config" path="D:/hospital-db/PatientRecords.csv" />
+		<logger level="INFO" doc:name="patient Data" doc:id="a260c8c3-4119-4647-9d94-6fe7f7fe8138" message='#["Fetching records and storing it in one file"]' />
+	
+</flow>
+	<flow name="fetchPatientData-ByID-implFlow" doc:id="b4090e60-aee6-478f-bc5c-eb5455269cfa">
+		<ee:transform doc:name="Meta Data" doc:id="09360908-79a7-4478-bc7f-bb19919ccc34">
+			<ee:message>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="patientID"><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.patientID]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<db:select doc:name="fetching data by ID" doc:id="3220b9db-b5eb-4507-8a9a-aab0c4a538bc" config-ref="Database_Config">
+			<db:sql><![CDATA[select * from  Patient where patientID= :patientID;]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+	patientID : vars.patientID
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="output payload" doc:id="97949d95-6602-4ff7-8cd9-eec84f5800c1">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="FetchPatientData-ByStatus-implflow" doc:id="40c58d0a-806c-49af-957c-00531b5b36b9" >
+		<ee:transform doc:name="Meta Data" doc:id="f664bd9e-8cc8-4115-a945-88c3e45ef5fe" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="query" ><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.patientStatus]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<db:select doc:name="fetching data by Patientstatus" doc:id="4414125e-0444-4476-835d-2a1fa4b2c78c" config-ref="Database_Config">
+			<db:sql><![CDATA[select * from  Patient where patientStatus =:patientStatus]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	patientStatus : vars.query
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="output payload" doc:id="cd4c8e57-ae3c-4f0b-a21b-4dc803006afa" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="UpdatePatientData-implFlow" doc:id="70d6bdaa-aa4f-4ef1-8cb3-4c1353f9c27c">
+		<ee:transform doc:name="Meta Data" doc:id="9b77f198-db08-4b80-b72e-8b2f620171bb">
+			<ee:message>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="City"><![CDATA[%dw 2.0
+output application/json
+---
+payload.City]]></ee:set-variable>
+				<ee:set-variable variableName="patientID" ><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.patientID]]></ee:set-variable>
+			
+</ee:variables>
+		</ee:transform>
+		<db:update doc:name="Updating patient Records" doc:id="d5925168-ee1f-4306-901d-a36f8799c3d7" config-ref="Database_Config">
+			<db:sql><![CDATA[UPDATE Patient SET City= :City WHERE patientID= :patientID]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+patientID :vars.patientID,
+City :vars.City
+
+}]]]></db:input-parameters>
+		</db:update>
+		<ee:transform doc:name="output payload" doc:id="2e25cc2e-a2a3-40d9-a0ce-d08eeaf73c7d">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="patient Records" doc:id="b886c2fc-08b7-408d-a6f6-33e15fbc3740" message='#["end"]' />
+	</flow>
+	<flow name="deletePatientRecordbyID-implFlow" doc:id="2c8b381d-d9fe-4772-8cf9-e385c11d7f94" >
+		<ee:transform doc:name="Meta Data" doc:id="9bac0a39-ea3d-43a5-a8b0-f8236e024630" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="patientID" ><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.patientID]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<db:delete doc:name="removing Patient Records" doc:id="f9d8226a-549e-4027-91f2-eea6ebfddb47" config-ref="Database_Config">
+			<db:sql ><![CDATA[delete from Patient where patientID= :patientID]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+patientID : vars.patientID
+}]]]></db:input-parameters>
+		</db:delete>
+		<ee:transform doc:name="output payload" doc:id="318be230-4805-4616-bfe0-f1fe0a6edf23" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="InsertNewPatientRecord-implFlow" doc:id="b1d5820e-1de2-4193-98bf-6fac0252bc5a">
+		<ee:transform doc:name="Meta Data" doc:id="773c797c-1c2f-4a4f-8ceb-c7bdf95ce301">
+					<ee:message />
+					<ee:variables>
+						<ee:set-variable variableName="inputData"><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-variable>
+						<ee:set-variable variableName="failedRecords"><![CDATA[%dw 2.0
+output application/json
+var requiredKeys = [
+  "PatientName",
+  "Gender",
+  "BOD",
+  "MobileNumber",
+  "Address",
+  "City",
+  "State",
+  "ZipCode",
+  "EmailID",
+  "occupation",
+  "MaritialStatus",
+  "EmergencyContact",
+  "PatientStatus",
+  "MedicalHistory",
+  "ReasonForVisit"
+]
+---
+[payload] map ((item, index) -> 
+    if(sizeOf((keysOf(item) -- requiredKeys) default "") >= 1)
+    item
+    else
+    null
+) filter $ != null]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+		<choice doc:name="Choice" doc:id="127f26ff-c957-45ca-a738-882b40cdce8e" >
+			<when expression="#[sizeOf(vars.failedRecords ) &gt; 0]">
+				<ee:transform doc:name="input payload" doc:id="56818769-39cb-472e-8ae0-e70d7d3dabac">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+vars.failedRecords]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<ee:transform doc:name="converting payload into csv" doc:id="380b158b-d6ff-43ca-a7db-77872e3dd8db">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/csv quoteValues = true
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<file:write doc:name="csv" doc:id="ccef88f1-076c-47de-8416-9a4b68bb262e" config-ref="File_Config" path="D:/hospital-db/FailedRecords.csv" />
+			
+</when>
+			<otherwise >
+				<set-variable value="#[payload]" doc:name="input payload" doc:id="29cd3ce7-ee6e-42f2-888b-72aa6b933f75" variableName="originalpayload"/>
+				<db:select doc:name="fetching Patient Data" doc:id="0d120e8d-6075-4db5-954a-507d5119c85d" config-ref="Database_Config">
+			<db:sql><![CDATA[select * from  Patient]]></db:sql>
+		</db:select>
+				<ee:transform doc:name="Meta Data" doc:id="40cfd921-aa51-4a13-9cec-f3452e1d83d8">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+			<ee:variables>
+						<ee:set-variable variableName="PatientStatus" ><![CDATA[%dw 2.0
+output application/json
+---
+vars.inputData.PatientStatus]]></ee:set-variable>
+						<ee:set-variable variableName="MobileNumber" ><![CDATA[%dw 2.0
+output application/json
+---
+vars.inputData.MobileNumber]]></ee:set-variable>
+			
+</ee:variables>
+		</ee:transform>
+				<choice doc:name="Choice" doc:id="50dde006-b98f-45dc-9c62-6bf7ad74b8c3">
+			<when expression="#[sizeOf(payload filter $.MobileNumber ~=vars.originalpayload.MobileNumber)!=0]">
+						<db:update doc:name="Updating Record" doc:id="77774545-dcf8-49b8-b4d1-a9054004e3bc" config-ref="Database_Config">
+							<db:sql ><![CDATA[UPDATE Patient SET PatientStatus = :PatientStatus WHERE MobileNumber = :MobileNumber]]></db:sql>
+							<db:input-parameters ><![CDATA[#[{
+PatientStatus  :vars.PatientStatus,
+MobileNumber : vars.MobileNumber
+}]]]></db:input-parameters>
+						</db:update>
+						<set-payload value="#[vars.originalpayload]" doc:name="Payload" doc:id="d2a25191-b693-4942-9bbe-6063a75a8a94" />
+						<ee:transform doc:name="output payload" doc:id="9ad93275-9653-42ce-b8b3-dd94c9ac0cd4">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: "ID already existed"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+						<ee:transform doc:name="converting payload into csv" doc:id="90062588-3081-4bb4-82bb-a45284d501ad">
+							<ee:message>
+								<ee:set-payload><![CDATA[%dw 2.0
+output application/csv quoteValues = true
+---
+vars.originalpayload default ""]]></ee:set-payload>
+							</ee:message>
+						</ee:transform>
+						<file:write doc:name="csv" doc:id="aac98a61-81e3-4177-82cc-338d792e00fd" config-ref="File_Config" path="D:/hospital-db/UpdatedRecords.csv" mode="APPEND"/>
+			</when>
+					<otherwise>
+				<db:insert doc:name="Inserting new record" doc:id="e573d4ff-946b-4452-8a01-c17e8c18f25c" config-ref="Database_Config">
+			<db:sql><![CDATA[INSERT INTO Patient ( PatientName, Gender,BOD,MobileNumber,Address,City,State,ZipCode,EmailID,occupation,MaritialStatus,EmergencyContact, PatientStatus,MedicalHistory,ReasonForVisit)
+VALUES(:PatientName,:Gender,:BOD,:MobileNumber,:Address,:City,:State,:ZipCode,:EmailID,:occupation,:MaritialStatus,:EmergencyContact,:PatientStatus,:MedicalHistory,:ReasonForVisit);]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+    "PatientName": vars.originalpayload.PatientName,
+    "Gender": vars.originalpayload.Gender,
+    "BOD": vars.originalpayload.BOD,
+    "MobileNumber": vars.originalpayload.MobileNumber,
+    "Address": vars.originalpayload.Address,
+    "City": vars.originalpayload.City,
+    "State": vars.originalpayload.State,
+    "ZipCode": vars.originalpayload.ZipCode,
+    "EmailID": vars.originalpayload.EmailID,
+    "occupation": vars.originalpayload.occupation,
+    "MaritialStatus": vars.originalpayload.MaritialStatus,
+    "EmergencyContact": vars.originalpayload.EmergencyContact,
+    "PatientStatus": vars.originalpayload.PatientStatus,
+    "MedicalHistory": vars.originalpayload.MedicalHistory,
+    "ReasonForVisit" : vars.originalpayload.ReasonForVisit 
+     }]]]></db:input-parameters>
+		</db:insert>
+				<set-payload value="#[vars.originalpayload]" doc:name=" Payload" doc:id="12910d88-037e-41b6-b9b4-c992446a4173" />
+						<ee:transform doc:name="converting payload into csv" doc:id="e48c0bbd-9749-409d-842e-67ad41ff0fd7">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/csv quoteValues = true
+---
+vars.originalpayload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+						<file:write doc:name="csv" doc:id="92c78532-ae8e-49c0-932d-fd2621da7f9b" config-ref="File_Config" path="D:/hospital-db/InsertedRecords.csv" mode="APPEND"/>
+			</otherwise>
+		</choice>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="Logger" doc:id="d9b952b1-e27c-47dc-8bb2-6c3eb0d7c508" message='#["end"]' />
+	
+</flow>
+</mule>

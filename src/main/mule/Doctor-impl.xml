@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
+	<flow name="FetchDoctor-implFlow" doc:id="7ac56f53-2dd1-40d8-b22f-24ed93c918f6" >
+		<db:select doc:name="fetching DoctorsData" doc:id="0d0cbbe3-4fb2-45fa-a623-efa682fe1c68" config-ref="Database_Config">
+			<db:sql ><![CDATA[select * from  Doctor;]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="output payload" doc:id="6d2bb7f1-ab4e-420d-b53e-3b1d87473274" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Doctors Data" doc:id="38984dd7-1cf6-4660-828e-28b4b0475dfd" message='#[payload]' />
+	</flow>
+		<flow name="FetchDoctorData-ByID-implFlow" doc:id="ae879f25-dc4f-4665-86f1-cf7f7968d3cd">
+		<ee:transform doc:name="Meta Data" doc:id="b87b7bc6-a342-4476-92e8-5c6e4045c3ed">
+			<ee:message>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="staffId" ><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.staffId]]></ee:set-variable>
+			
+</ee:variables>
+		</ee:transform>
+		<db:select doc:name="fetching data by ID" doc:id="ecda0a28-1889-4946-8ce1-dd3b5a49e704" config-ref="Database_Config">
+			<db:sql><![CDATA[select * from  Doctor where staffId= :staffId;]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+	 staffId : vars.staffId
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="output payload" doc:id="890aef86-c5e6-460d-b0e8-91c9a4b7dd9a">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="FetchDoctorData-BySpecialist-implFlow" doc:id="266e4a64-5ae5-4360-809f-6c38d9aea1cb">
+		<ee:transform doc:name="Meta Data" doc:id="ed2a1338-142c-4edd-a48b-15e75f413c7f">
+			<ee:message>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="SpecialistIN"><![CDATA[%dw 2.0
+output application/java
+---
+attributes.queryParams.SpecialistIN]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<db:select doc:name="Fetching data by specilization" doc:id="c0f91678-e6bc-4bc1-8cd1-8ce25e9daca6" config-ref="Database_Config">
+			<db:sql><![CDATA[select * from  Doctor where SpecialistIN = :SpecialistIN]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+SpecialistIN  :vars.SpecialistIN
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="output payload" doc:id="a272e247-99de-446b-9006-fcd24e9b4b74">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="UpdatetDoctorData-implFlow" doc:id="8402ad26-a384-41f1-b0fc-16fdcf5d2e4b" >
+		<ee:transform doc:name="Meta Data" doc:id="e583b913-11d6-4934-93a3-3c1d4ae221b2" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="staffId" ><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.staffId]]></ee:set-variable>
+				<ee:set-variable variableName="OfficeHours" ><![CDATA[%dw 2.0
+output application/json
+---
+payload.OfficeHours]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<db:update doc:name="Updatating Records" doc:id="bb9d3a82-c0d8-4af3-adb1-b7d93a389f2a" config-ref="Database_Config">
+			<db:sql ><![CDATA[UPDATE Doctor SET OfficeHours= :OfficeHours WHERE staffId= :staffId]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+staffId :vars.staffId,
+OfficeHours :vars.OfficeHours
+
+}]]]></db:input-parameters>
+		</db:update>
+		<ee:transform doc:name="output payload" doc:id="913e09bd-6e4d-43d5-933e-3c3a22e9611e">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	
+	<flow name="deleteDoctorRecordBystaffID-implFlow" doc:id="e64fcb42-40ca-4a4e-a872-a08f7838d77d" >
+		<ee:transform doc:name="Meta Data" doc:id="c5e8d110-f064-40f9-b10c-37bee7798c6f" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="staffId" ><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.staffId]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<db:delete doc:name="Removing Record" doc:id="ff7839c0-ff31-4558-94af-710f677f5961" config-ref="Database_Config">
+			<db:sql ><![CDATA[delete from Doctor where staffId= :staffId]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+staffId : vars.staffId
+}]]]></db:input-parameters>
+		</db:delete>
+		<ee:transform doc:name="output payload" doc:id="205cda89-b5bb-40f6-93de-a3c121ad131a" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="insertNewDoctorRecord-implFlow" doc:id="df2e0d44-4294-4da2-8a44-f75549e89eee" >
+		<ee:transform doc:name="Meta Data" doc:id="f49588d3-dfbe-424b-bb5e-e1f8c344420f">
+					<ee:message />
+					<ee:variables>
+						<ee:set-variable variableName="failedRecords"><![CDATA[%dw 2.0
+output application/json
+var requiredKeys = [
+  "doctorName",
+  "Gender",
+  "EmailID",
+  "SpecialistIN",
+  "AcceptingCases",
+  "Surgeon",
+  "OfficeHours"
+]
+---
+[payload] map ((item, index) -> 
+    if(sizeOf((keysOf(item) -- requiredKeys) default "") >= 1)
+    item
+    else
+    null
+) filter $ != null]]></ee:set-variable>
+						<ee:set-variable variableName="inputData"><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+		<choice doc:name="Choice" doc:id="48b3a04e-1244-42cd-ba04-974ced4675e7" >
+			<when expression="#[sizeOf(vars.failedRecords ) &gt; 0]">
+				<ee:transform doc:name="input payload" doc:id="2f994e04-1bb7-49b1-80d8-a35d8029ae5e">
+					<ee:message>
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+vars.failedRecords]]></ee:set-payload>
+					
+</ee:message>
+				</ee:transform>
+				<ee:transform doc:name="coverting payload into csv" doc:id="c9f59094-962b-4420-80ac-a4cb4e24e970" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/csv quoteValues = true
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<file:write doc:name="csv file" doc:id="9dcaf40b-bf36-429f-8984-2aa06625f89d" config-ref="File_Config" path="D:/hospital-db/FailedRecords.csv" />
+			
+
+</when>
+			<otherwise >
+				<set-variable value="#[payload]" doc:name="input payload" doc:id="c309776c-a65b-40c8-8e09-cd358943ee06" variableName="orinalpayload" />
+				<db:select doc:name="fetching data" doc:id="f246a3fa-a931-4104-86f7-b1ae0b5f09a9" config-ref="Database_Config">
+			<db:sql><![CDATA[select * from  doctor]]></db:sql>
+		</db:select>
+				<ee:transform doc:name="Meta Data" doc:id="2369dc7e-55af-4e46-a195-8935a232104e">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="ID"><![CDATA[%dw 2.0
+output application/java
+---
+vars.inputData.staffId]]></ee:set-variable>
+						<ee:set-variable variableName="staffId" ><![CDATA[%dw 2.0
+output application/json
+---
+vars.inputData.staffId]]></ee:set-variable>
+						<ee:set-variable variableName="Surgeon" ><![CDATA[%dw 2.0
+output application/json
+---
+vars.inputData.Surgeon]]></ee:set-variable>
+			
+</ee:variables>
+		</ee:transform>
+				<choice doc:name="Choice" doc:id="68360c04-a64f-42e7-8d9c-a925315aac8e">
+			<when expression="#[sizeOf(payload filter $.EmailID ~=vars.inputdata.EmailID)!=0]">
+						<db:update doc:name="Updating Record" doc:id="c5815c6e-6e1e-4b48-9366-16a0fddc0c8c" config-ref="Database_Config">
+							<db:sql ><![CDATA[UPDATE Doctor SET Surgeon = :Surgeon WHERE staffId = :staffId]]></db:sql>
+							<db:input-parameters ><![CDATA[#[{
+staffId :vars.staffId,
+Surgeon :vars.Surgeon
+
+}]]]></db:input-parameters>
+						</db:update>
+						<set-payload value="#[vars.orinalpayload]" doc:name="payload" doc:id="b7782967-ba43-4b42-9330-ae02641ac7a1" />
+						<ee:transform doc:name="output payload" doc:id="abec98be-7f8d-4e90-a1ee-33d6427de093">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message":"updated"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+						<ee:transform doc:name="converting payload into csv" doc:id="fd4fe98e-63d6-4b17-943e-778049dbd8ea">
+							<ee:message>
+								<ee:set-payload><![CDATA[%dw 2.0
+output application/csv quoteValues = true
+---
+vars.orinalpayload default ""]]></ee:set-payload>
+							</ee:message>
+						</ee:transform>
+						<file:write doc:name="csv" doc:id="de4ab67e-1c2a-4c45-88d9-5d69232b3614" config-ref="File_Config" path="D:/hospital-db/UpdatedRecords.csv" mode="APPEND"/>
+			
+</when>
+			<otherwise>
+				<db:insert doc:name="Inserting new record" doc:id="6cbab1cb-9389-4e6f-bd46-61eb11dcf090" config-ref="Database_Config">
+			<db:sql><![CDATA[INSERT INTO doctor (doctorName, Gender, EmailID, SpecialistIN, AcceptingCases,Surgeon,OfficeHours)
+values(:doctorName,:Gender,:EmailID,:SpecialistIN,:AcceptingCases,:Surgeon,:OfficeHours)]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+    "doctorName": vars.inputData.doctorName,
+    "Gender": vars.inputData.Gender,
+    "EmailID": vars.inputData.EmailID,
+    "SpecialistIN": vars.inputData.SpecialistIN,
+    "AcceptingCases": vars.inputData.AcceptingCases,
+    "Surgeon": vars.inputData.Surgeon,
+    "OfficeHours": vars.inputData.OfficeHours
+  }]]]></db:input-parameters>
+		</db:insert>
+				<set-payload value="#[vars.orinalpayload]" doc:name="Payload" doc:id="f1f3bba2-fa1a-4241-8cbb-f1353b08327f" />
+						<ee:transform doc:name="converting payload into csv" doc:id="661eb0fe-932b-4cb0-a08c-6dc0369417f9">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/csv quoteValues = true
+---
+vars.orinalpayload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+						<file:write doc:name="csv" doc:id="8aa56d97-3331-4149-8154-bc0e02b6c523" config-ref="File_Config" path="D:\hospital-db/InsertedRecords.csv" mode="APPEND"/>
+			
+</otherwise>
+		</choice>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="Logger" doc:id="6e980a73-4a98-47fb-b68f-a09006bafa63" message="#[payload]" />
+		
+</flow>
+	
+</mule>

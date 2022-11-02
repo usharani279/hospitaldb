@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+	xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<munit:config name="Doctor-impl-test-suite.xml" />
+	<munit:test name="Doctor-impl-test-suite-FetchDoctor-implFlowTest" doc:id="7aa0db51-0f02-4702-8f8a-2490d884d0e4" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="4372c71e-5475-4a6d-b078-1867956c4d2f" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="fetching DoctorsData" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="0d0cbbe3-4fb2-45fa-a623-efa682fe1c68" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to FetchDoctor-implFlow" doc:id="46e21dfb-bd8c-4731-b6c7-2e3e68232912" name="get:\Doctor:hospital-database-management-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="8ea079a2-3cc4-48b2-82e2-9e43c9e930d8" is="#[MunitTools::notNullValue()]" expression="#[payload]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="Doctor-impl-test-suite-FetchDoctorData-ByID-implFlowTest" doc:id="ee89e50d-e33a-460d-a0a5-7af5f5449016" description="Test">
+		<munit:behavior>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="420d43d7-a8b1-4659-ab75-bd96c786afd7" processor="db:select">
+				<munit-tools:with-attributes>
+					<munit-tools:with-attribute whereValue="fetching data by ID" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="ecda0a28-1889-4946-8ce1-dd3b5a49e704" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			
+</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution>
+			<munit:set-event doc:name="Set Event" doc:id="d803a28a-282e-47ca-b091-1d404f22276c">
+				<munit:payload value='#[&#10;%dw 2.0 &#10;output application/json&#10;---&#10;{&#10;        "doctorName": "mahi",&#10;        "Gender": "male",&#10;        "EmailID": "mahi@gmail.com",&#10;        "SpecialistIN": "outpatient",&#10;        "AcceptingCases": "Emergency",&#10;        "Surgeon": "yes",&#10;        "OfficeHours": "10:00AM - 05:00PM"&#10;    }&#10;]&#10;' />
+				<munit:variables >
+					<munit:variable key="staffId" value="15" />
+				</munit:variables>
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to FetchDoctor-implFlow" doc:id="e491f918-5865-4916-8af1-c26fa5749314" name="get:\DoctorRecord:hospital-database-management-api-config" />
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="0bc5fa7c-f8a2-411a-97e3-e304a44f6a27" is="#[MunitTools::notNullValue()]" expression="#[payload]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="Doctor-impl-test-suite-FetchDoctorData-BySpecialist-implFlowTest" doc:id="67be39ce-7aec-4075-bf79-eb406d12193a" description="Test">
+		<munit:behavior>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="0c01da72-9fe8-4b77-b839-7709aa3553d1" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Fetching data by specilization" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="c0f91678-e6bc-4bc1-8cd1-8ce25e9daca6" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+
+			
+</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution>
+			<munit:set-event doc:name="Set Event" doc:id="010faeaa-5b3b-40e2-86b0-f5e9d21a41f7">
+				<munit:payload value='#[&#10;%dw 2.0 &#10;output application/json&#10;---&#10;{&#10;        "doctorName": "mahi",&#10;        "Gender": "male",&#10;        "EmailID": "mahi@gmail.com",&#10;        "SpecialistIN": "outpatient",&#10;        "AcceptingCases": "Emergency",&#10;        "Surgeon": "yes",&#10;        "OfficeHours": "10:00AM - 05:00PM"&#10;    }&#10;]&#10;' />
+				<munit:variables >
+					<munit:variable key="SpecialistIN" value="ENT" />
+				</munit:variables>
+			
+</munit:set-event>
+			<flow-ref doc:name="Flow-ref to FetchDoctor-implFlow" doc:id="d5ad615a-a194-4b6a-b78d-e9a58673adaa" name="get:\DoctorData:hospital-database-management-api-config" />
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="751b0bab-be40-43e0-89ab-0be087c90a9d" is="#[MunitTools::notNullValue()]" expression="#[payload]" />
+		</munit:validation>
+	</munit:test>
+<munit:test name="Doctor-impl-test-suite-UpdatetDoctorData-implFlowTest" doc:id="a89e7599-3b1e-4d3b-bbcb-50e75d60c422" description="Test">
+		<munit:behavior>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="52de535d-3a1e-4e5f-a050-0954261d2b40" processor="db:update">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Updatating Records" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="bb9d3a82-c0d8-4af3-adb1-b7d93a389f2a" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+
+
+			
+</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution>
+			<munit:set-event doc:name="Set Event" doc:id="a442aadc-34da-4777-880b-90e56cbee07a">
+				<munit:payload value='#[&#10;%dw 2.0 &#10;output application/json&#10;---&#10;{&#10;        "doctorName": "mahi",&#10;        "Gender": "male",&#10;        "EmailID": "mahi@gmail.com",&#10;        "SpecialistIN": "outpatient",&#10;        "AcceptingCases": "Emergency",&#10;        "Surgeon": "yes",&#10;        "OfficeHours": "10:00AM - 05:00PM"&#10;    }&#10;]&#10;' mediaType="application/json" />
+				<munit:variables >
+					<munit:variable key="staffId" value="15" />
+				</munit:variables>
+			
+
+</munit:set-event>
+			<flow-ref doc:name="Flow-ref to FetchDoctor-implFlow" doc:id="bc7560a9-409e-4589-a966-21e4b11af9b0" name="put:\DoctorRecord:hospital-database-management-api-config" />
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="8c08e0c2-3f01-4c8d-b65d-9f296339fbd7" is="#[MunitTools::notNullValue()]" expression="#[payload]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="Doctor-impl-test-suite-deleteDoctorRecordBystaffID-implFlowTest" doc:id="f17fb323-628c-42fb-bbf7-e95db07f67ff" description="Test">
+		<munit:behavior>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="605069d8-fe51-4325-8a0e-2d0c69af9628" processor="db:delete">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Removing Record" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="ff7839c0-ff31-4558-94af-710f677f5961" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+
+
+
+			
+</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution>
+			<munit:set-event doc:name="Set Event" doc:id="1e163a65-4c73-47fc-80cc-c088591c4fa2">
+				<munit:payload value='#[&#10;%dw 2.0 &#10;output application/json&#10;---&#10;{&#10;        "doctorName": "mahi",&#10;        "Gender": "male",&#10;        "EmailID": "mahi@gmail.com",&#10;        "SpecialistIN": "outpatient",&#10;        "AcceptingCases": "Emergency",&#10;        "Surgeon": "yes",&#10;        "OfficeHours": "10:00AM - 05:00PM"&#10;    }&#10;]&#10;' mediaType="application/json" />
+				<munit:variables >
+					<munit:variable key="staffId" value="15" />
+				</munit:variables>
+			
+
+
+</munit:set-event>
+			<flow-ref doc:name="Flow-ref to FetchDoctor-implFlow" doc:id="b27280c0-0112-4107-a4d3-d4faad8f3a45" name="delete:\DoctorRecord:hospital-database-management-api-config" />
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="1256c42c-7dc7-4da8-80af-9a329f09157d" is="#[MunitTools::notNullValue()]" expression="#[payload]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="Doctor-impl-test-suite-insertNewDoctorRecord-implFlowTest" doc:id="76989fa1-75fc-4230-9faf-ab692c9496ed" description="Test">
+		<munit:behavior>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="a23ee57a-b859-4399-a819-a82781f94052" processor="file:write">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="9dcaf40b-bf36-429f-8984-2aa06625f89d" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="5b85d587-6edf-4f0e-950e-c3b255099b31" >
+				<munit:payload value='#[&#10;%dw 2.0 &#10;output application/json&#10;---&#10;{&#10;        "doctorName": "mahi",&#10;        "Gender": "male",&#10;        "EmailID": "mahi@gmail.com",&#10;        "SpecialistIN": "outpatient",&#10;        "AcceptingCases": "Emergency",&#10;        "Surgeon": "yes",&#10;        "OfficeHours": "10:00AM - 05:00PM"&#10;    }&#10;]&#10;' mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to insertNewDoctorRecord-implFlow" doc:id="4d3a7120-59df-45a4-a75a-5049c434b7c2" name="post:\DoctorData:hospital-database-management-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="e6e514db-9d7d-4425-a489-bcbd9bb996e9" is="#[MunitTools::notNullValue()]" expression="#[payload]"/>
+		</munit:validation>
+	</munit:test>
+<munit:test name="Doctor-impl-test-suite-insertNewDoctorRecord2-implFlowTest" doc:id="4e7ada0b-803f-4793-bdcf-fc68bdb7bbf6" description="Test">
+		<munit:behavior>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="c4fcfe08-bb4a-44d8-9ea0-7fdf29eeb7f2" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="f246a3fa-a931-4104-86f7-b1ae0b5f09a9" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://doctor.json','application/json')]" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="1aeac3e3-281b-4a08-ac08-bfa973dd29a2" processor="db:update">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="c5815c6e-6e1e-4b48-9366-16a0fddc0c8c" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="59532e1f-b8de-447c-bb92-ff8bbcc27fea" processor="file:write">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="de4ab67e-1c2a-4c45-88d9-5d69232b3614" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="05111289-fd2b-472c-8f4a-05a4740a8ef0" >
+				<munit:payload value='#[&#10;%dw 2.0 &#10;output application/json&#10;---&#10;{&#10;        "doctorName": "mahi",&#10;        "Gender": "male",&#10;        "EmailID": "mahi@gmail.com",&#10;        "SpecialistIN": "outpatient",&#10;        "AcceptingCases": "Emergency",&#10;        "Surgeon": "yes",&#10;        "OfficeHours": "10:00AM - 05:00PM"&#10;    }&#10;]&#10;' mediaType="application/json" />
+				<munit:variables >
+					<munit:variable key="failedRecords" value="{}" mediaType="application/json" />
+				</munit:variables>
+
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to insertNewDoctorRecord-implFlow" doc:id="89372f5c-38b8-47b5-99d3-bca8e011d1d9" name="insertNewDoctorRecord-implFlow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="2864fac7-0ed2-43ee-b90e-b417aefcfc1c" is="#[MunitTools::notNullValue()]" expression="#[payload]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="Doctor-impl-test-suite-insertNewDoctorRecord3-implFlowTest" doc:id="a0e2a848-b54e-499b-a51b-f8f9c50ff618" description="Test">
+		<munit:behavior>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="58c3834e-d530-4498-a4ed-1741e4310b7c" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="f246a3fa-a931-4104-86f7-b1ae0b5f09a9" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://doctor.json','application/json')]" mediaType="application/json" />
+				</munit-tools:then-return>
+			
+</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="95f6ecd5-67d5-4757-8409-8f76d30051f8" processor="db:insert">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="6cbab1cb-9389-4e6f-bd46-61eb11dcf090" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="b029ca85-63d3-4217-b22c-cd21102b22a0" processor="file:write">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="8aa56d97-3331-4149-8154-bc0e02b6c523" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+
+			</munit-tools:mock-when>
+
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="e351dfd3-5e0c-445c-a7d2-621f57b2e834" >
+				<munit:payload value='#[&#10;%dw 2.0 &#10;output application/json&#10;---&#10;{&#10;        "doctorName": "mahi",&#10;        "Gender": "male",&#10;        "EmailID": "mahi@gmail.com",&#10;        "SpecialistIN": "outpatient",&#10;        "AcceptingCases": "Emergency",&#10;        "Surgeon": "yes",&#10;        "OfficeHours": "10:00AM - 05:00PM"&#10;    }&#10;]&#10;' mediaType="application/json" />
+				<munit:variables >
+					<munit:variable key="failedRecords" value="{}" mediaType="application/json" />
+				</munit:variables>
+
+			
+</munit:set-event>
+			<flow-ref doc:name="Flow-ref to insertNewDoctorRecord-implFlow" doc:id="7e385b51-7dbf-4cb7-8c22-e60b8a3b1ba0" name="insertNewDoctorRecord-implFlow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="bdf44f1f-1ee0-4621-82be-1632e2e749a7" is="#[MunitTools::notNullValue()]" expression="#[payload]"/>
+		</munit:validation>
+	</munit:test>
+</mule>

@@ -1,0 +1,19 @@
+[
+  {
+    "PatientID": 110,
+    "PatientName": "rani",
+    "Gender": "female",
+    "BOD": "2019-03-30",
+    "MobileNumber": 9014303651,
+    "Address": "hyd",
+    "City": "kphb",
+    "State": "TS",
+    "ZipCode": 500007,
+    "EmailID": "rani@gmail.com",
+    "occupation": "Software",
+    "MaritialStatus": "Unmarride",
+    "EmergencyContactDetails": 909090090,
+    "PatientStatus": "Visited",
+    "MedicalHistory": "Notes/desccription"
+  }
+]

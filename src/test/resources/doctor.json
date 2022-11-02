@@ -1,0 +1,22 @@
+[
+  {
+    "Gender": "male",
+    "Surgeon": "yes",
+    "EmailID": "john@gmail.com",
+    "SpecialistIN": "ENT",
+    "AcceptingCases": "OP-Visist",
+    "doctorName": "john",
+    "staffId": 1,
+    "OfficeHours": "12AM to 9PM"
+  },
+  {
+    "Gender": "male",
+    "Surgeon": "yes",
+    "EmailID": "mahi@gmail.com",
+    "SpecialistIN": "Cardiology",
+    "AcceptingCases": "Emergency",
+    "doctorName": "mahi",
+    "staffId": 2,
+    "OfficeHours": "10:00AM - 05:00PM"
+  }
+]

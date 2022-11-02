@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd ">
+    <apikit:config name="hospital-database-management-api-config" api="hospital-database-management-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <flow name="hospital-database-management-api-main">
+        <http:listener path="/api/*" config-ref="hospital-database-management-api-httpListenerConfig">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="hospital-database-management-api-config" />
+        <error-handler ref="exception-handlingError_Handler" />
+    </flow>
+    <flow name="put:\DoctorRecord:hospital-database-management-api-config" doc:id="9d4a0920-22b7-4a05-a985-669df4c79464">
+        <logger level="INFO" doc:name="start Logger" doc:id="c9ddd936-902d-4a67-9498-345ee40f03a3" message="#[&quot;UpdatetDoctorData flow started&quot;]" />
+        <flow-ref doc:name="calling UpdatetDoctorData Flow " doc:id="97a2eb33-b6d2-4b12-86ae-66f0cffd7ba5" name="UpdatetDoctorData-implFlow" />
+        <logger level="INFO" doc:name="end Logger" doc:id="e6f62354-558c-45ef-9eea-f4db6d2315fe" message="#[&quot;UpdatetDoctorData flow ended&quot;]" />
+    </flow>
+    <flow name="put:\patientRecords:hospital-database-management-api-config" doc:id="2d2d6942-0d49-45e5-8113-dcba8be39f2e">
+        <logger level="INFO" doc:name="Logger" doc:id="329c0ebf-bd4f-4712-bb81-b90032bcb385" message="#[&quot;flow started&quot;]" />
+        <flow-ref doc:name="UpdatePatientData Flow " doc:id="18190036-17ac-4140-8323-e50840094ffd" name="UpdatePatientData-implFlow" />
+        <logger level="INFO" doc:name="Logger" doc:id="1fa72f46-24c5-4398-aa90-cf95e4d092f5" message="#[&quot;flow ended&quot;]" />
+    </flow>
+    <flow name="delete:\DoctorRecord:hospital-database-management-api-config" doc:id="1deff9dd-5878-43ad-aae6-7b71090b2eaa">
+        <logger level="INFO" doc:name="Logger" doc:id="3cc9daa3-0523-4af3-b223-4bfcdcd19719" message="#[&quot;flow started&quot;]" />
+        <flow-ref doc:name="calling deleteDoctorRecordBystaffID Flow " doc:id="6c8ccde2-1547-481f-9b3c-4418b2bbe0aa" name="deleteDoctorRecordBystaffID-implFlow" />
+        <logger level="INFO" doc:name="Logger" doc:id="75828e1c-8d2b-4b14-942d-d5e03ad009a3" message="#[&quot;flow ended&quot;]" />
+    </flow>
+    <flow name="delete:\patientRecords:hospital-database-management-api-config" doc:id="cbc3b853-43e0-4d5e-8f32-156a4c31748c">
+        <logger level="INFO" doc:name="Logger" doc:id="ceba21dc-1cec-4589-b766-c6206c028273" message="#[&quot;flow started&quot;]" />
+        <flow-ref doc:name="calling deletePatientRecordbyID Flow " doc:id="6650d9b0-193a-4567-a5ac-33cc0653cb1c" name="deletePatientRecordbyID-implFlow" />
+        <logger level="INFO" doc:name="Logger" doc:id="9011fa6c-429a-479e-ba8a-641e6d90b95e" message="#[&quot;flow ended&quot;]" />
+    </flow>
+    <flow name="get:\DoctorData:hospital-database-management-api-config" doc:id="75b232c3-b060-41f5-a3f6-a9cf22635972">
+        <logger level="INFO" doc:name="Logger" doc:id="f00f1a10-4a57-4516-a6b0-1b6be6bf3444" message="#[&quot;flow started&quot;]" />
+        <flow-ref doc:name="calling FetchDoctorData-BySpecialist Flow" doc:id="e3bc4d99-99af-4966-8510-1dd67cc41e89" name="FetchDoctorData-BySpecialist-implFlow" />
+        <logger level="INFO" doc:name="Logger" doc:id="9d1712b6-e040-4fff-9efc-57e853ab0a85" message="#[&quot;flow ended&quot;]" />
+    </flow>
+    <flow name="get:\DoctorRecord:hospital-database-management-api-config" doc:id="37021646-cb95-4f7b-811a-e692d04f1cf1">
+        <logger level="INFO" doc:name="Logger" doc:id="37555ec6-7ee8-4bd3-b64b-6fa2d0054608" message="#[&quot;flow started&quot;]" />
+        <flow-ref doc:name="calling FetchDoctorData-ByID Flow" doc:id="f89f9ede-989b-481e-a144-7dc75d330a26" name="FetchDoctorData-ByID-implFlow" />
+        <logger level="INFO" doc:name="Logger" doc:id="23bda6e3-197c-48af-822a-7adf2ed161ec" message="#[&quot;flow ended&quot;]" />
+    </flow>
+    <flow name="get:\patientData:hospital-database-management-api-config" doc:id="9aadd99c-c1c4-4486-b33e-d4c8cfbc7d47">
+        <logger level="INFO" doc:name="Logger" doc:id="745d7920-4687-4a84-862e-48c51b9ef453" message="#[&quot;flow started&quot;]" />
+        <flow-ref doc:name="calling FetchPatientData-ByStatus Flow" doc:id="6513012c-083b-4b39-b01c-2838e60ba49f" name="FetchPatientData-ByStatus-implflow" />
+        <logger level="INFO" doc:name="Logger" doc:id="8af3213b-d11a-418b-98bf-fabc0d45403b" message="#[&quot;flow ended&quot;]" />
+    </flow>
+    <flow name="get:\patientRecords:hospital-database-management-api-config" doc:id="b6a1cd37-4ed3-4538-bf9f-1b7cfb512830">
+        <logger level="INFO" doc:name="Logger" doc:id="8b27933b-e1aa-4216-b19b-b5fc238735e8" message="#[&quot;flow started&quot;]" />
+        <flow-ref doc:name="calling fetchPatientData-ByID Flow" doc:id="c074c82b-5b2b-4f10-b3a9-a9077e6e8704" name="fetchPatientData-ByID-implFlow" />
+        <logger level="INFO" doc:name="Logger" doc:id="39db2532-d5c7-47f8-a01c-2e8d2e631ae8" message="#[&quot;flow ended&quot;]" />
+    </flow>
+    <flow name="post:\DoctorData:hospital-database-management-api-config" doc:id="33ba40d7-9c40-4e25-a394-9666074c74d6">
+        <logger level="INFO" doc:name="Logger" doc:id="e1439378-026a-42e5-92de-d3471e463471" message="#[&quot;flow started&quot;]" />
+        <flow-ref doc:name="calling insertNewDoctorRecord-Flow " doc:id="4be19f5e-f717-454a-b119-700cb4b47a4f" name="insertNewDoctorRecord-implFlow" />
+        <logger level="INFO" doc:name="Logger" doc:id="29ff9ad2-c173-421c-8543-1c5ff1a6a089" message="#[&quot;flow ended&quot;]" />
+    </flow>
+    <flow name="post:\patientData:hospital-database-management-api-config" doc:id="f10cc368-ac1c-4620-aa09-3e0158ff1ea4">
+        <logger level="INFO" doc:name="Logger" doc:id="a0898b77-8473-49f5-8cdf-0e9ba3d55d79" message="#[&quot;flow started&quot;]" />
+        <flow-ref doc:name="calling InsertNewPatientRecord Flow" doc:id="b64b2b66-053d-4df0-bd01-9886621f95ec" name="InsertNewPatientRecord-implFlow" />
+        <logger level="INFO" doc:name="Logger" doc:id="c222b021-e929-4549-99a5-6ffaecd515a9" message="#[&quot;flow ended&quot;]" />
+    </flow>
+    <flow name="get:\Doctor:hospital-database-management-api-config" doc:id="b7b67d9a-14a1-4329-a590-a922cdc50ad6">
+        <logger level="INFO" doc:name="Logger" doc:id="2ee6e653-625c-4cca-860c-63b44b20471b" message="#[&quot;flow started&quot;]" />
+        <flow-ref doc:name="calling FetchDoctor Flow " doc:id="532969de-774b-4686-9376-6e287b7b4d8c" name="FetchDoctor-implFlow" />
+        <logger level="INFO" doc:name="Logger" doc:id="c57606e9-f9f4-4af6-add3-40b2fd4c0001" message="#[&quot;flow ended&quot;]" />
+    </flow>
+    <flow name="get:\patient:hospital-database-management-api-config" doc:id="cba7ec0f-4956-4ad4-a4a6-c51701d2d096">
+        <logger level="INFO" doc:name="start Logger" doc:id="d0371528-c99e-4157-b610-d57b7eb0b392" message="#[&quot;flow started&quot;]" />
+        <flow-ref doc:name="calling fetchPatient Flow " doc:id="3fa78ce9-ff80-4a9b-9774-620a8a3c16c4" name="fetchPatient-implFlow" />
+        <logger level="INFO" doc:name="end Logger" doc:id="5d2eb8af-9907-4e09-87fa-fb3bd1de4ea1" message="#[&quot;flow ended&quot;]" />
+    </flow>
+</mule>

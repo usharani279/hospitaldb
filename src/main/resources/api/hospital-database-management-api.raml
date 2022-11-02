@@ -1,0 +1,172 @@
+#%RAML 1.0
+title: Hospital Database Management-api
+description: fetch all patients data
+traits:
+  error_response: !include trait.raml
+/patient:
+  get:
+     responses:
+      200:
+        body:
+          application/json:
+            example: !include example/Patient.json 
+/patientData:
+  is: [error_response]
+  get:
+    description: Fetch patient data by patient status
+    queryParameters:
+      patientStatus:
+        type: string
+        required: true
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+                  {
+                    "status":"200 ok",
+                    "message":"success"
+                  }
+  post:
+    description: Fetch the patient details
+    responses:
+      201:
+        body:
+          application/json:
+            example:
+                  {
+                    "status":"201 ok",
+                    "message":"success"
+                  }
+/patientRecords: 
+    is: [error_response]
+    get:
+     description: Fetch patient record by patient ID
+     queryParameters:
+      patientID:
+        type: number
+        required: true
+     responses:
+          200:
+            body:
+              application/json:
+                example: !include example/Patient.json   
+    delete:
+      description: Delete the perticular patient record
+      queryParameters:
+        patientID:
+          type: number
+          required: true
+      responses:
+        202:
+          body:
+            application/json:
+              example: !include example/Patient.json
+    put:
+     description: Update patient data by patient ID
+     queryParameters:
+      patientID:
+        type: number
+        required: true
+     responses:
+          201:
+            body:
+              application/json:
+                example: !include example/Patient.json
+
+/DoctorData:
+  is: [error_response]
+  get:
+    queryParameters:
+      SpecialistIN:
+        type: string
+        required: true
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include example/Doctor.json
+  post:
+    responses:
+      201:
+        body:
+          application/json:
+            example: {
+                    "status":"201 ok",
+                    "message":"success"
+                  }
+/DoctorRecord:
+    is: [error_response]
+    put:
+      description: Update the Doctor Record
+      queryParameters:
+        staffId:
+          type: number
+          required: true
+      responses:
+            201:
+              body:
+                application/json:
+                  example: !include example/Doctor.json
+    delete:
+      description: Delete the perticular Doctor record
+      queryParameters:
+        staffId:
+          type: number
+          required: true
+      responses:
+        202:
+          body:
+            application/json:
+              example: !include example/Doctor.json
+    get:
+      description: Fetch the doctor data
+      queryParameters:
+        staffId:
+          type: number
+          required: true
+      responses:
+        202:
+          body:
+            application/json:
+              example: !include example/Doctor.json
+/Doctor:
+    get:
+     responses:
+      200:
+        body:
+          application/json:
+            example: !include example/Doctor.json          
+
+        
+                
+
+               
+
+
+                                  
+                     
+                            
+
+      
+
+              
+              
+              
+
+                  
+                    
+    
+                
+
+
+                               
+          
+
+
+
+  
+  
+    
+      
+          

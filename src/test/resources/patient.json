@@ -1,0 +1,38 @@
+[
+  {
+    "MobileNumber": "8948784322",
+    "Address": "balanagar",
+    "occupation": "business",
+    "ReasonForVisit": "ENT",
+    "Gender": "male",
+    "patientID": "9",
+    "City": "hyd",
+    "MedicalHistory": "Notes",
+    "EmailID": "kp@gmail.com",
+    "MaritialStatus": "kp",
+    "PatientName": "maari",
+    "ZipCode": "500389",
+    "PatientStatus": "Active",
+    "BOD": "1998-03-30T00:00:00",
+    "State": "AP",
+    "EmergencyContact": ""
+  },
+  {
+    "MobileNumber": "9598701345",
+    "Address": "jangareddy",
+    "occupation": "model",
+    "ReasonForVisit": "ENT",
+    "Gender": "female",
+    "patientID": "10",
+    "City": "vijaynagar",
+    "MedicalHistory": "Notes/desccription",
+    "EmailID": "keerthi@gmail.com",
+    "MaritialStatus": "unmarride",
+    "PatientName": "keerthi",
+    "ZipCode": "500143",
+    "PatientStatus": "InActive",
+    "BOD": "1998-03-30T00:00:00",
+    "State": "AP",
+    "EmergencyContact": ""
+  }
+]

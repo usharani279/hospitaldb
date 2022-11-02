@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_70d6bdaa_aa4f_4ef1_8cb3_4c1353f9c27c_Output_Variables_City = Any
+
